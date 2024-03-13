@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#must be run after every certificate renew
+#run as root e.g. sudo -s
+
+
+chmod 0755 /etc/letsencrypt/
+chmod 0711 /etc/letsencrypt/live/
+chmod 0750 /etc/letsencrypt/live/hangcow.de/
+chmod 0711 /etc/letsencrypt/archive/
+chmod 0750 /etc/letsencrypt/archive/hangcow.de/
+chmod 0640 /etc/letsencrypt/archive/hangcow.de/{cert,chain,fullchain}*.pem
+chmod 0640 /etc/letsencrypt/archive/hangcow.de/privkey*.pem
+
+chown root:root /etc/letsencrypt/
+chown root:root /etc/letsencrypt/live/
+chown root:pi /etc/letsencrypt/live/hangcow.de/
+chown root:root /etc/letsencrypt/archive/
+chown root:pi /etc/letsencrypt/archive/hangcow.de/
+chown root:pi /etc/letsencrypt/archive/hangcow.de/{cert,chain,fullchain}*.pem
+chown root:pi /etc/letsencrypt/archive/hangcow.de/privkey*.pem

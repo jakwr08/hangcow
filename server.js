@@ -1,23 +1,37 @@
 // benötigte Pakete einbinden
+const fs = require('fs');
 const path = require('path');
 const http = require('http')
+const https = require('https');
 const express = require('express');
 const socketio = require('socket.io');
 
 // zu verwendenden Port definieren
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 8000;
+const app = express();
+
+// Certificate
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/hangcow.de/privkey.pem', 'utf8');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/hangcow.de/cert.pem', 'utf8');
+const ca = fs.readFileSync('/etc/letsencrypt/live/hangcow.de/chain.pem', 'utf8');
+
+const credentials = {
+	key: privateKey,
+	cert: certificate,
+	ca: ca
+};
 
 // Server einrichten
-const app = express();
-const server = http.createServer(app);
+const server = https.createServer(credentials, app);
 const io = socketio(server);
+
 
 // Server starten
 server.listen(PORT, () => 
 	console.log(`Server listening on port ${PORT}...`));
 
 // statische Website bereitstellen
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { dotfiles: 'allow' } ));
 
 
 io.on('connection', socket => {
