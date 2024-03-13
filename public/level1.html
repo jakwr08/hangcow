@@ -5,24 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hangcow Game</title>
     <style>
-        
         body {
             background-image: url('background.png');
             background-size: cover;
             background-repeat: no-repeat;
-            margin-right: 10%;
-            margin-left: 10%;
+            margin: 0;
+            padding: 0;
             font-family: Arial, sans-serif;
             text-align: center;
-            margin: 20px;
         }
-       
+        
         footer {
-            margin-top: 40px;
+
+            margin-bottom: 10%;
+        }
+
+        #info-footer {
+            margin-top: 20px;
             padding: 10px;
             font-size: 16px;
             border: 2px solid #ff0000;
             border-radius: 5px;
+            margin-bottom: 5%;
+            margin-left: 10%;
+            margin-right: 10%;
         }
 
         h1 {
@@ -31,24 +37,25 @@
 
         #game-info {
             margin-top: 20px;
-            margin-right: 20px;
             background-color: #eee;
             padding: 10px;
             border-radius: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: left;
+            margin-left: 5%;
+            margin-right: 5%;
         }
 
         #hangman-container {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
             margin-top: 20px;
         }
 
         #hangman-image {
-            max-width: 40%;
-            height: auto;
+            width: 80%; /* Adjust width for smaller screens */
+            max-width: 400px; /* Limit maximum width */
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
@@ -65,6 +72,8 @@
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            width: 80%; /* Adjust width for smaller screens */
+            max-width: 300px; /* Limit maximum width */
         }
 
         button {
@@ -83,10 +92,7 @@
         }
 
         #timer {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 18px;
+           color: red;
         }
 
         #popup-overlay {
@@ -119,19 +125,29 @@
         }
 
         #popup-image {
+            width: 80%;
             max-width: 200px;
             margin: 10px auto;
         }
+
+        #wrong-letters {
+
+            color:crimson;
+            font-weight: bold;
+        }
     </style>
 </head>
-<body style="margin-right: 20%; margin-left: 20%;">
+<body>
 
 <audio id="win-sound" src="https://www.sound-board.de/media/sounds/trump/trump_correct.mp3"></audio>
 <audio id="lose-sound" src="https://www.sound-board.de/media/sounds/Zwangshafte_Veganisierung.mp3"></audio>
 
+<h1>Hangcow</h1>
+
 <div id="game-info">
+    <p id="timer">Zeit: 0 Sekunden</p>
     <p>Falsch geratene Buchstaben: <span id="wrong-letters"></span></p>
-    <p style="margin-left: 20px;" id="timer">Zeit: 0 Sekunden</p>
+    
 </div>
 
 <div id="hangman-container">
@@ -142,7 +158,6 @@
 <input type="text" id="input-field" placeholder="Buchstabe eingeben" maxlength="1" onkeypress="handleKeyPress(event)">
 <button onclick="guessLetter()">Raten</button>
 
-
 <div id="popup-overlay">
     <div id="popup">
         <img id="popup-image" src="" alt="">
@@ -150,7 +165,6 @@
         <button onclick="resetGame()">Neues Spiel starten</button>
     </div>
 </div>
-<link rel="icon" href="favicon.ico" type="image/x-icon">
 
 
 <script>
@@ -241,6 +255,7 @@
         wrongLetters = [];
         hangmanParts = 0;
         timer = 0;
+        location.reload;
 
         document.getElementById("word-display").innerText = "";
         document.getElementById("wrong-letters").innerText = "";
@@ -252,7 +267,7 @@
         document.getElementById("win-sound").currentTime = 0;
         document.getElementById("lose-sound").pause();
         document.getElementById("lose-sound").currentTime = 0;
-      
+   
     }
 
     function showPopup(message, imageName) {
@@ -268,7 +283,8 @@
     startGame();
 </script>
 
-<footer><center><b>Sonderzeichen wie zum Beispiel ä in alter Schreibweise ausschreiben = ae!</b></center></footer>
+<footer><center><p id="info-footer">Sonderzeichen wie zum Beispiel ä in alter Schreibweise ausschreiben = ae!</p></center>
+    <a style="margin-right: 10%;" href="about.html">About</a><a href="impressum.html">Impressum</a> </footer>
 
 </body>
 </html>
