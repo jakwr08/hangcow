@@ -7,11 +7,8 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #00d9ff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
+            padding: 0;
         }
 
         .container {
@@ -19,7 +16,8 @@
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 300px;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
         h1 {
@@ -87,20 +85,36 @@
             border: none;
             cursor: pointer;
         }
+
+        @media screen and (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            input[type="text"],
+            input[type="submit"] {
+                width: calc(100% - 20px);
+            }
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Login</h1>
     <form>
-        <center>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name">
-            <input type="submit" id="button" value="Login">
-        </center>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name">
+        <input type="submit" id="button" value="Login">
     </form>
-    <p></p></o><button  style="background-color: #4CAF50;
-    border: none; border-radius: 3px; color: #fff;padding: 10px;text-align: center;text-transform: uppercase;width: 100%;cursor: pointer;" onclick="openPopup()">Anleitung anzeigen</button>
+    <p></p></o><button style="background-color: #4CAF50;
+    border: none;
+    border-radius: 3px;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+    cursor: pointer;" onclick="openPopup()">Anleitung anzeigen</button>
     <div class="popup-overlay" id="popup-overlay">
         <div class="popup" id="popup">
             <button style="" class="close-btn" onclick="closePopup()">X</button>
