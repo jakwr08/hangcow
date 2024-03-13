@@ -1,1 +1,1 @@
-# hangcow
+# An Hangcow Game
