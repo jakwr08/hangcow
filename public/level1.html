@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangcow Game</title>
+    <style>
+        
+        body {
+            background-image: url('background.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin-right: 10%;
+            margin-left: 10%;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+       
+        footer {
+            margin-top: 40px;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ff0000;
+            border-radius: 5px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #game-info {
+            margin-top: 20px;
+            margin-right: 20px;
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        #hangman-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #hangman-image {
+            max-width: 40%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #word-display {
+            font-size: 24px;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        #input-field {
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #timer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
+        }
+
+        #popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        #popup {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #popup button {
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        #popup button:hover {
+            background-color: #45a049;
+        }
+
+        #popup-image {
+            max-width: 200px;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body style="margin-right: 20%; margin-left: 20%;">
+
+<audio id="win-sound" src="https://www.sound-board.de/media/sounds/trump/trump_correct.mp3"></audio>
+<audio id="lose-sound" src="https://www.sound-board.de/media/sounds/Zwangshafte_Veganisierung.mp3"></audio>
+
+<div id="game-info">
+    <p>Falsch geratene Buchstaben: <span id="wrong-letters"></span></p>
+    <p style="margin-left: 20px;" id="timer">Zeit: 0 Sekunden</p>
+</div>
+
+<div id="hangman-container">
+    <img id="hangman-image" src="hangcow_0.png" alt="Hangman Image">
+    <div id="word-display"></div>
+</div>
+
+<input type="text" id="input-field" placeholder="Buchstabe eingeben" maxlength="1" onkeypress="handleKeyPress(event)">
+<button onclick="guessLetter()">Raten</button>
+
+
+<div id="popup-overlay">
+    <div id="popup">
+        <img id="popup-image" src="" alt="">
+        <p id="popup-message"></p>
+        <button onclick="resetGame()">Neues Spiel starten</button>
+    </div>
+</div>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+
+
+<script>
+    const wordList = ["Apfel", "Blume", "Teller", "Lampe", "Vogel", "Sessel", "Koffer", "Himmel", "Kissen", "Keller",
+    "Flasche", "Fenster", "Spatel", "Katze", "Leiter", "Tisch", "Storch", "Schlaf", "Lachen", "Drache",
+    "Brille", "Storch", "Knochen", "Blazer", "Muster", "Planet", "Fahrrad", "Trommel", "Glueck", "Kaktus",
+    "Krone", "Kruste", "Blende", "Strecke", "Blende", "Scharf", "Lachen", "Zweig", "Klasse", "Blende",
+    "Spalte", "Papier", "Sommer", "Streik", "Drohne", "Zucker", "Menschen", "Handel", "Kaefer", "Nutzen",
+    "Laufen", "Atmen", "Nasche", "Geduld", "Knochen", "Braten", "Strahl", "Feuer", "Stehen", "Marmor",
+    "Blumen", "Frucht", "Holz", "Lachen", "Kerzen", "Strich", "Stille", "Spiel", "Zeiger", "Zaehler",
+    "Genuss", "Erde", "Fluten", "Koenige", "Glaenze", "Haengen", "Traenen", "Zahlen", "Zylinder", "Farben",
+    "Teilen", "Stimme", "Heimat", "Greife", "Fluten", "Lernen", "Glueck", "Zellen", "Zahnarzt", "Neigen",
+    "Schutz", "Hocker", "Tragen", "Sorgen", "Schule", "Grasen", "Kitzel", "Eimer", "Zaehlen", "Blitze" ];
+
+    let selectedWord = "";
+    let guessedWord = [];
+    let wrongLetters = [];
+    let hangmanParts = 0;
+    let timer = 0;
+    let timerInterval;
+
+    function startGame() {
+        selectedWord = wordList[Math.floor(Math.random() * wordList.length)].toUpperCase();
+        guessedWord = Array(selectedWord.length).fill("_");
+
+        document.getElementById("word-display").innerText = guessedWord.join(" ");
+        document.getElementById("wrong-letters").innerText = "";
+
+        timerInterval = setInterval(function () {
+            timer++;
+            document.getElementById("timer").innerText = `Zeit: ${timer} Sekunden`;
+        }, 1000);
+    }
+
+    function guessLetter() {
+        const inputField = document.getElementById("input-field");
+        const letter = inputField.value.toUpperCase();
+
+        if (!letter.match(/[A-Z]/)) {
+            alert("Bitte gib einen Buchstaben ein.");
+            return;
+        }
+
+        inputField.value = "";
+
+        if (selectedWord.includes(letter)) {
+            for (let i = 0; i < selectedWord.length; i++) {
+                if (selectedWord[i] === letter) {
+                    guessedWord[i] = letter;
+                }
+            }
+
+            document.getElementById("word-display").innerText = guessedWord.join(" ");
+        } else {
+            wrongLetters.push(letter);
+            document.getElementById("wrong-letters").innerText = wrongLetters.join(", ");
+
+            hangmanParts++;
+            document.getElementById("hangman-image").src = `hangcow_${hangmanParts}.png`;
+        }
+
+        checkGameStatus();
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            guessLetter();
+        }
+    }
+
+    function checkGameStatus() {
+        if (guessedWord.join("") === selectedWord) {
+            // Gewonnen
+            clearInterval(timerInterval);
+            document.getElementById("win-sound").play();
+            showPopup("Gewonnen! Zeit: " + timer + " Sekunden", "endwin.png");
+        } else if (wrongLetters.length === 8) {
+            // Verloren
+            clearInterval(timerInterval);
+            document.getElementById("lose-sound").play();
+            showPopup("Verloren! Das richtige Wort war: " + selectedWord, "endlose.png");
+        }
+    }
+
+    function resetGame() {
+        selectedWord = "";
+        guessedWord = [];
+        wrongLetters = [];
+        hangmanParts = 0;
+        timer = 0;
+
+        document.getElementById("word-display").innerText = "";
+        document.getElementById("wrong-letters").innerText = "";
+        document.getElementById("hangman-image").src = "";
+
+        closePopup();
+        startGame();
+        document.getElementById("win-sound").pause();
+        document.getElementById("win-sound").currentTime = 0;
+        document.getElementById("lose-sound").pause();
+        document.getElementById("lose-sound").currentTime = 0;
+      
+    }
+
+    function showPopup(message, imageName) {
+        document.getElementById("popup-message").innerText = message;
+        document.getElementById("popup-image").src = imageName;
+        document.getElementById("popup-overlay").style.display = "flex";
+    }
+
+    function closePopup() {
+        document.getElementById("popup-overlay").style.display = "none";
+    }
+
+    startGame();
+</script>
+
+<footer><center><b>Sonderzeichen wie zum Beispiel ä in alter Schreibweise ausschreiben = ae!</b></center></footer>
+
+</body>
+</html>
