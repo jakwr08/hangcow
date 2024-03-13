@@ -7,4 +7,6 @@ Hangcow offers players a fun and challenging way to test their vocabulary and wo
 
 Are you ready to take on the challenge of Hangcow and see how many words you can guess correctly? Play now and see if you can save the cow from being hanged!
 
-Hangcow is suitable for players of all ages and can be enjoyed solo or with friends and family. It's a great way to pass the time and sharpen your mind while having fun! 
+Hangcow is suitable for players of all ages and can be enjoyed solo or with friends and family. It's a great way to pass the time and sharpen your mind while having fun!
+
+Running on hangcow.de:80
